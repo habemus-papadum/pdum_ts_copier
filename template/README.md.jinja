@@ -8,7 +8,12 @@ A pnpm + TypeScript monorepo. Every package under `packages/*` is published to n
 ## Requirements
 
 - Node {{ node_version }}+
-- pnpm {{ pnpm_version }}+ (`npm install -g pnpm`, or `corepack enable`)
+- pnpm {{ pnpm_version }}+ — install it however you like (`brew install pnpm`, the
+  [standalone script](https://pnpm.io/installation#using-a-standalone-script), or
+  `npm i -g pnpm`). You do **not** need corepack: this repo pins an exact pnpm in
+  `package.json` → `packageManager`, and pnpm 10+ automatically downloads and runs that
+  exact version for every command in this repo. Every machine (and CI) gets the identical
+  pnpm. To change it, run `pnpm pkg set packageManager=pnpm@<version>` and commit.
 
 ## Getting started
 
