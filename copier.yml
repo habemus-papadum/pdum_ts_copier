@@ -1,0 +1,91 @@
+# Copier configuration for pdum_ts_copier.
+# Generates a pnpm + TypeScript monorepo of lockstep-versioned npm packages
+# built with Vite (library mode) and tested with Vitest.
+_min_copier_version: "9.0.0"
+_subdirectory: template
+_templates_suffix: ".jinja"
+
+_jinja_extensions:
+  - jinja2_time.TimeExtension
+
+# --------------------------------------------------------------------- questions
+project_name:
+  type: str
+  help: "Project name (used in docs; defaults to the destination directory name)."
+  default: "{{ _copier_conf.dst_path | basename }}"
+
+github_repo_name:
+  type: str
+  help: "GitHub repository name."
+  default: "{{ _copier_conf.dst_path | basename }}"
+
+github_owner:
+  type: str
+  help: "GitHub owner (user or org) that will host the repo."
+  default: "habemus-papadum"
+
+npm_scope:
+  type: str
+  help: "npm scope for every published package (include the leading @)."
+  default: "@{{ github_owner }}"
+
+package_name:
+  type: str
+  help: "Name of the first package to scaffold."
+  default: "core"
+
+package_slug:
+  type: str
+  help: "Directory + npm slug for the first package."
+  default: "{{ package_name | lower | replace(' ', '-') | replace('_', '-') }}"
+
+package_description:
+  type: str
+  help: "One-line description of the first package."
+  default: "A TypeScript library."
+
+author_name:
+  type: str
+  default: "Nehal Patel"
+
+author_email:
+  type: str
+  default: "nehal@alum.mit.edu"
+
+node_version:
+  type: str
+  help: "Node major version (.nvmrc, engines, CI)."
+  default: "24"
+
+pnpm_version:
+  type: str
+  help: "pnpm version placeholder (engines + CI). The exact installed version is pinned into packageManager at generation time."
+  default: "11"
+
+github_repo_visibility:
+  type: str
+  help: "Visibility for the created GitHub repo."
+  choices:
+    - public
+    - private
+  default: public
+
+init_git_and_github:
+  type: bool
+  help: "Initialize git, commit, and create + push the GitHub repo with gh?"
+  default: true
+
+# ------------------------------------------------------------------------- tasks
+_tasks:
+  # Pin the exact pnpm on this machine into package.json "packageManager"
+  # (reproducible for CI; works without corepack on PATH).
+  - "pnpm pkg set packageManager=pnpm@$(pnpm --version)"
+  - "pnpm install"
+  - command: "git init -b main"
+    when: "{{ init_git_and_github }}"
+  - command: "git add ."
+    when: "{{ init_git_and_github }}"
+  - command: "git commit -m 'Initial commit from pdum_ts_copier'"
+    when: "{{ init_git_and_github }}"
+  - command: "gh repo create {{ github_owner }}/{{ github_repo_name }} --{{ github_repo_visibility }} --source=. --remote=origin --push"
+    when: "{{ init_git_and_github }}"

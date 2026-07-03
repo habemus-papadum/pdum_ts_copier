@@ -1,0 +1,29 @@
+{
+  "name": "{{ github_repo_name }}",
+  "version": "0.0.0+dev",
+  "private": true,
+  "type": "module",
+  "description": "{{ project_name }} — a lockstep-versioned TypeScript monorepo.",
+  "author": "{{ author_name }} <{{ author_email }}>",
+  "license": "MIT",
+  "engines": {
+    "node": ">={{ node_version }}",
+    "pnpm": ">={{ pnpm_version }}"
+  },
+  "scripts": {
+    "build": "pnpm -r run build",
+    "typecheck": "pnpm -r run typecheck",
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "lint": "biome check .",
+    "format": "biome check --write .",
+    "new-package": "node scripts/new-package.mjs",
+    "version:check": "node scripts/versioning.mjs current"
+  },
+  "devDependencies": {
+    "@biomejs/biome": "^2.0.0",
+    "typescript": "^5.6.0",
+    "vite": "^6.0.0",
+    "vitest": "^3.2.0"
+  }
+}

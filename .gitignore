@@ -1,0 +1,5 @@
+# Hygiene for the template repo itself (does NOT affect generated projects —
+# Copier only renders the template/ subdirectory).
+node_modules/
+.DS_Store
+*.log
